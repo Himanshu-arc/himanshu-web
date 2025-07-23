@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Portfolio</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0f0f0f;
+      color: #fff;
+      overflow-x: hidden;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      background: rgba(15, 15, 15, 0.9);
+      padding: 1rem;
+      z-index: 10;
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      border-bottom: 1px solid #00ffcc;
+    }
+    header a {
+      color: #00ffcc;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+    header a:hover {
+      color: #ffffff;
+    }
+    #bg-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -3;
+    }
+    #water-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(0,255,255,0.15) 0%, rgba(0,0,0,0.5) 100%);
+      z-index: -2;
+      pointer-events: none;
+    }
+    #sparks {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .sound-control {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 3;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 10px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      color: #00ffcc;
+      border: 1px solid #00ffcc;
+    }
+    .scroll-top {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #00ffcc;
+      color: #0f0f0f;
+      padding: 10px 15px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      cursor: pointer;
+      z-index: 5;
+      box-shadow: 0 0 10px #00ffcc;
+      display: none;
+    }
+    .welcome {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.8);
+      font-size: 2rem;
+      animation: fadeOut 2s ease 3s forwards;
+      z-index: 2;
+      position: fixed;
+      width: 100%;
+      color: #00ffcc;
+    }
+    @keyframes fadeOut {
+      to { opacity: 0; visibility: hidden; }
+    }
+    main {
+      padding: 2rem;
+      max-width: 1200px;
+      margin: auto;
+      display: grid;
+      gap: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+    section {
+      padding: 1.5rem;
+      background: #1a1a1a;
+      border-radius: 10px;
+      transition: transform 0.3s, background 0.3s;
+    }
+    section:hover {
+      background: #2c2c2c;
+      transform: scale(1.02);
+    }
+    h2 {
+      margin-bottom: 1rem;
+      color: #00ffcc;
+    }
+    .profile-img {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+    .profile-img img {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      border: 3px solid #00ffcc;
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0); }
+    }
+    .socials a {
+      color: #00ffcc;
+      text-decoration: none;
+      margin-right: 1rem;
+      transition: color 0.3s;
+    }
+    .socials a:hover {
+      color: #fff;
+    }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .gallery img {
+      width: 100%;
+      border-radius: 10px;
+      transition: transform 0.3s;
+    }
+    .gallery img:hover {
+      transform: scale(1.05);
+    }
+    @media (max-width: 600px) {
+      main {
+        padding: 1rem;
+        gap: 1rem;
+      }
+      .profile-img img {
+        width: 100px;
+        height: 100px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <video id="bg-video" autoplay loop muted>
+    <source src="https://www.videvo.net/videvo_files/converted/2017_07/preview/170628_01_Fire_4k_019.mp449445.webm" type="video/webm">
+  </video>
+  <div id="water-overlay"></div>
+  <canvas id="sparks"></canvas>
+  <audio id="collision-sound" autoplay loop>
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_3f5365f8b7.mp3?filename=sparks-electricity-110828.mp3" type="audio/mpeg">
+  </audio>
+
+  <header>
+    <a href="#about">About</a>
+    <a href="#skills">Skills</a>
+    <a href="#experience">Experience</a>
+    <a href="#projects">Projects</a>
+    <a href="#hobbies">Hobbies</a>
+    <a href="#details">Details</a>
+    <a href="#contact">Contact</a>
+  </header>
+
+  <div class="sound-control" onclick="toggleSound()">🔊 Mute</div>
+  <div class="scroll-top" id="scrollTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'});">⬆</div>
+  <div class="welcome">A very welcome to all of you</div>
+
+  <main>
+    <div class="profile-img">
+      <img src="https://static.vecteezy.com/system/resources/previews/009/031/322/large_2x/hkk-logo-hkk-letter-hkk-letter-logo-design-initials-hkk-logo-linked-with-circle-and-uppercase-monogram-logo-hkk-typography-for-technology-business-and-real-estate-brand-vector.jpg" alt="Profile Image" />
+    </div>
+    <section id="about">
+      <h2>About Me</h2>
+      <p>Hello! I'm HIMANSHU KUMAR KAUSHIK, A UPCOMING SOFTWARE ENGINEER . I'm an aspiring web developer passionate about creating beautiful, responsive, and interactive web experiences. I enjoy blending art and technology to build engaging UI/UX.</p>
+    </section>
+    <section id="skills">
+      <h2>Skills</h2>
+      <p>HTML, CSS, JavaScript, React.js, Node.js, Express, MongoDB, Git, Figma</p>
+    </section>
+    <section id="experience">
+      <h2>Experience</h2>
+      <p>Worked on freelance web design projects, personal portfolio websites, and several open-source contributions.</p>
+    </section>
+    <section id="projects">
+      <h2>Projects</h2>
+      <p>Portfolio Website, Task Manager App, Chat Application, Weather Dashboard</p>
+      <div class="gallery">
+<a href="https://github.com/Himanshu-arc/himanshu-web/blob/main/himuASSIGNMENT.html">project 1 </a>
+<a href = "https://github.com/Himanshu-arc/himanshu-web/blob/main/mic.html"> project 2 </a>
+      </div>
+    </section>
+    <section id="hobbies">
+      <h2>Hobbies</h2>
+      <p>Designing, Photography, Coding, Watching Sci-fi Films, Reading Tech Blogs</p>
+    </section>
+    <section id="details">
+      <h2>Other Details</h2>
+      <p>Open for remote work and collaborations. Fluent in English and Hindi. Enthusiastic about AI and Web3 technologies.</p>
+    </section>
+    <section id="contact">
+      <h2>Contact</h2>
+      <div class="socials">
+        <a href="https://www.linkedin.com/in/himanshu-kumar-kaushik-99874436a/?lipi=urn%3Ali%3Apage%3Ad_flagship3_feed%3BNeJyku0xTBePeUc9pfBxkQ%3D%3D-" target="_blank">LinkedIn</a>
+
+        <a href="https://github.com/Himanshu-arc/-Himanshu" target="_blank">GitHub</a>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const canvas = document.getElementById("sparks");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const sparks = [];
+
+    for (let i = 0; i < 60; i++) {
+      sparks.push({
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+        dx: (Math.random() - 0.5) * 5,
+        dy: (Math.random() - 0.5) * 5,
+        life: Math.random() * 60 + 40
+      });
+    }
+
+    function animateSparks() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "orange";
+      for (let spark of sparks) {
+        ctx.beginPath();
+        ctx.arc(spark.x, spark.y, 2, 0, Math.PI * 2);
+        ctx.fill();
+        spark.x += spark.dx;
+        spark.y += spark.dy;
+        spark.life--;
+        if (spark.life <= 0) {
+          spark.x = mouse.x;
+          spark.y = mouse.y;
+          spark.dx = (Math.random() - 0.5) * 5;
+          spark.dy = (Math.random() - 0.5) * 5;
+          spark.life = Math.random() * 60 + 40;
+        }
+      }
+      requestAnimationFrame(animateSparks);
+    }
+
+    const mouse = { x: canvas.width / 2, y: canvas.height / 2 };
+    window.addEventListener("mousemove", e => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+
+    animateSparks();
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    function toggleSound() {
+      const audio = document.getElementById("collision-sound");
+      const btn = document.querySelector(".sound-control");
+      audio.muted = !audio.muted;
+      btn.textContent = audio.muted ? "🔈 Unmute" : "🔊 Mute";
+    }
+
+    window.addEventListener("scroll", () => {
+      const scrollBtn = document.getElementById("scrollTop");
+      scrollBtn.style.display = window.scrollY > 300 ? "block" : "none";
+    });
+  </script>
+</body>
+</html>
